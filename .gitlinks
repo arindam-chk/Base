@@ -1,0 +1,9 @@
+# Projects
+Cogent modules/Cogent git@github.com:arindam-chk/Cogent.git main
+Yolox modules/Yolox git@github.com:arindam-chk/Yolox.git main
+
+# Modules
+
+# Scripts
+build scripts/build https://github.com/chronoxor/CppBuildScripts.git master
+cmake scripts/cmake https://github.com/chronoxor/CppCMakeScripts.git master
