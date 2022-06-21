@@ -25,3 +25,16 @@ ExternalProject_Add(Yolox
 
 ExternalProject_Get_Property(Yolox source_dir binary_dir)
 #####################################################################################
+
+
+
+#####################################################################################
+include(ExternalProject)
+ExternalProject_Add(Yolov3
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Yolov3
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}
+    INSTALL_COMMAND ""
+    )
+
+ExternalProject_Get_Property(Yolov3 source_dir binary_dir)
+#####################################################################################
