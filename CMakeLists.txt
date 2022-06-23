@@ -2,39 +2,24 @@ project(Base)
 cmake_minimum_required(VERSION 3.0)
 enable_testing()
 
-
-#####################################################################################
-include(ExternalProject)
-ExternalProject_Add(Cogent
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Cogent
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}
-    INSTALL_COMMAND ""
-    )
-
-ExternalProject_Get_Property(Cogent source_dir binary_dir)
-#####################################################################################
+#Add_directory only for non-app submodules
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Cogent ${CMAKE_CURRENT_SOURCE_DIR}/Cogent/build)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Cogent/src)
 
 
-#####################################################################################
-include(ExternalProject)
-ExternalProject_Add(Yolox
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Yolox
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}
-    INSTALL_COMMAND ""
-    )
+#Build the apps in the usual way as already there in cogent
 
-ExternalProject_Get_Property(Yolox source_dir binary_dir)
-#####################################################################################
-
-
-
-#####################################################################################
-include(ExternalProject)
-ExternalProject_Add(Yolov3
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Yolov3
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}
-    INSTALL_COMMAND ""
-    )
-
-ExternalProject_Get_Property(Yolov3 source_dir binary_dir)
-#####################################################################################
+file(GLOB_RECURSE APPS_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/apps/**/app*.cc)
+foreach(app_src ${APPS_SRCS})
+  get_filename_component(APP_DIRNAME ${app_src} DIRECTORY)
+  get_filename_component(APP_FILENAME ${app_src} NAME_WE)
+  string(REPLACE ${COGENT_ROOT}/apps/ "" APP_TEMP_NAME ${APP_DIRNAME})
+  string(REPLACE "/" "_" APP_TEMP1_NAME ${APP_TEMP_NAME})
+  set(APP_NAME ${APP_TEMP1_NAME}_${APP_FILENAME})
+  message(STATUS "found app  : " ${APP_NAME})
+  add_executable(${APP_NAME} ${app_src})
+  add_test(NAME ${APP_NAME} COMMAND ${APP_NAME})
+  target_link_libraries(${APP_NAME} Cogent pthread)
+  set_target_properties(${APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${APP_DIRNAME})
+  set_target_properties(${APP_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "run_${CMAKE_SYSTEM_PROCESSOR}")
+endforeach()
